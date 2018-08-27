@@ -7,9 +7,10 @@ const app = express();
 const router = require('./router');
 const mongoose = require('mongoose');
 const cors = require('cors');
-
+require('dotenv').config();
 // DB Setup
-var mongoDB = process.env.MONGODB_URI || 'mongodb://localhost/auth';
+//var mongoDB = process.env.MONGODB_URI || 'mongodb://localhost/auth';
+var mongoDB = 'mongodb://localhost/auth';
 mongoose.connect(mongoDB);
 
 // App Setup
