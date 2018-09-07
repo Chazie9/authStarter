@@ -9,12 +9,13 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
 // DB Setup
-var mongoDB = process.env.MONGODB_URI || 'mongodb://localhost/auth';
+var mongoDB = process.env.MONGODB_URI;
 //var mongoDB = 'mongodb://localhost/auth';
 mongoose.connect(mongoDB);
 
 // App Setup
-app.use(morgan('combined'));
+app.use(morgan('dev'));
+// app.use(morgan('combined'));
 app.use(cors());
 app.use(bodyParser.json({ type: '*/*' }));
 router(app);

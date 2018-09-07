@@ -1,4 +1,3 @@
-
 const jwt = require('jwt-simple');
 const User = require('../models/user');
 const config = require('../config');
@@ -37,11 +36,15 @@ exports.signup = function(req, res, next) {
       password: password
     });
 
-    user.save(function(err, user) {
+    user.save(function(err, savedUser) {
       if (err) { return next(err); }
-      console.log('do i have the users data?',)
+      console.log('do i have the users data?', savedUser)
       // Repond to request indicating the user was created
-      res.json({ userData: req.user, token: tokenForUser(user)});
+      let newU = {
+        makerId: savedUser._id,
+        email: savedUser.email
+      }
+      res.json({ userData: newU, token: tokenForUser(user)});
     });
   });
 }
