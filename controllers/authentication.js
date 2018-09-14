@@ -16,6 +16,7 @@ exports.signup = function(req, res, next) {
   console.log('you want to sign up', req.body)
   const email = req.body.email;
   const password = req.body.password;
+  const username = req.body.username;
 
   if (!email || !password) {
     return res.status(422).send({ error: 'You must provide email and password'});
@@ -30,21 +31,32 @@ exports.signup = function(req, res, next) {
       return res.status(422).send({ error: 'Email is in use' });
     }
 
-    // If a user with email does NOT exist, create and save user record
-    const user = new User({
-      email: email,
-      password: password
-    });
-
-    user.save(function(err, savedUser) {
+    User.findOne({ username: username }, function(err, existingUsername) {
       if (err) { return next(err); }
-      console.log('do i have the users data?', savedUser)
-      // Repond to request indicating the user was created
-      let newU = {
-        makerId: savedUser._id,
-        email: savedUser.email
+  
+      // If a user with email does exist, return an error
+      if (existingUsername) {
+        return res.status(422).send({ error: 'Email is in use' });
       }
-      res.json({ userData: newU, token: tokenForUser(user)});
+
+      // If a user with email does NOT exist, create and save user record
+      const user = new User({
+        email: email,
+        username: username,
+        password: password
+      });
+
+      user.save(function(err, savedUser) {
+        if (err) { return next(err); }
+        console.log('do i have the users data?', savedUser)
+        // Repond to request indicating the user was created
+        let newU = {
+          makerId: savedUser._id,
+          email: savedUser.email,
+          username: savedUser.username
+        }
+        res.json({ userData: newU, token: tokenForUser(user)});
+      });
     });
   });
 }
